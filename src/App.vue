@@ -1,13 +1,13 @@
-<script setup lang="ts">
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="h-[100vh] w-[100%] bg-bgblue">
+    <div>
+      <router-link to="/">Home</router-link>
+      <router-link to="/login" />
+      <router-link to="/register" /> 
+    </div>
+    <main>
+      <router-view />
+    </main>
+
   </div>
 </template>
