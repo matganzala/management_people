@@ -1,6 +1,7 @@
 <template>
     <div>
       <button @click="signOut" v-if="isLoggedIn">SING OUT</button>
+      hello
     </div>
   </template>
 <script lang="ts">
@@ -17,11 +18,8 @@ export default defineComponent({
     const auth = getAuth();
     onAuthStateChanged(auth, (user: User | null | string) => {
       this.isLoggedIn = !!user;
-      if(user){
         this.$router.push('/');  
-      }else{
-        this.$router.push('/login');  
-      }
+      
       
     });
   },
