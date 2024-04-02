@@ -1,13 +1,46 @@
 <template>
-    <div class="flex flex-col space-y-2">
-        <label>Email</label>
-        <input v-model="userData.email" type="text" />
-        <label>Senha</label>
-        <input v-model="userData.senha" type="password" />
-        <button type="submit" @click="register">Cadastrar</button>
-        <span v-if="errorMessage" class="text-red-500">{{ errorMessage }}</span>
-    </div>
-</template>
+    <v-form>
+      <v-container>
+        <v-row>
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <v-text-field
+              :counter="10"
+              label="First name"
+              hide-details
+              required
+            ></v-text-field>
+          </v-col>
+  
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <v-text-field
+              :counter="10"
+              label="Last name"
+              hide-details
+              required
+            ></v-text-field>
+          </v-col>
+  
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <v-text-field
+              v-model="userData.email"
+              label="E-mail"
+              hide-details
+              required
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-form>
+  </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
