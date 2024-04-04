@@ -1,7 +1,15 @@
+// vite.config.js
+import vue from '@vitejs/plugin-vue'
 
-module.exports = {
-    compilerOptions: {
-      isCustomElement: tag => tag.startsWith('v-') 
-    }
-  }
-  
+export default {
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          // treat all tags with a dash as custom elements
+          isCustomElement: (tag) => tag.includes('v')
+        }
+      }
+    })
+  ]
+}

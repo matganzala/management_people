@@ -9,12 +9,12 @@
         <v-simple-table>
           <template v-slot:default>
             <v-thead>
-              <v-tr>
+              <!-- <v-tr>
                 <th class="text-left">Nome</th>
                 <th class="text-left">Email</th>
                 <th class="text-left">Cargo</th>
                 <th class="text-left">Ações</th>
-              </v-tr>
+              </v-tr> -->
             </v-thead>
             <tbody class="space-x-5">
               <tr v-for="user in users" :key="user.userId">
@@ -42,7 +42,7 @@
           <v-form @submit.prevent="saveChanges">
             <v-text-field v-model="editedUser.name" label="Nome" required></v-text-field>
             <v-text-field v-model="editedUser.email" label="Email" type="email" required></v-text-field>
-            <v-text-field v-model="editedUser.cpf" label="Idade"></v-text-field>
+            <!-- <v-text-field v-model="editedUser.cpf" label="Idade"></v-text-field> -->
             <v-btn type="submit" color="primary">Salvar</v-btn>
             <v-btn color="error" @click="cancelEdit">Cancelar</v-btn>
           </v-form>
