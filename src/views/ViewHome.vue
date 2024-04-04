@@ -1,3 +1,4 @@
+
 <template>
   <v-container class="h-[100vh]">
     <button @click="logout" v-if="isLoggedIn">SING OUT</button>
@@ -7,14 +8,14 @@
       <v-card-text>
         <v-simple-table>
           <template v-slot:default>
-            <thead>
-              <tr>
+            <v-thead>
+              <v-tr>
                 <th class="text-left">Nome</th>
                 <th class="text-left">Email</th>
                 <th class="text-left">Cargo</th>
                 <th class="text-left">Ações</th>
-              </tr>
-            </thead>
+              </v-tr>
+            </v-thead>
             <tbody class="space-x-5">
               <tr v-for="user in users" :key="user.userId">
                 <td>{{ user.name }}</td>
@@ -22,9 +23,8 @@
                 <td>
                   {{ user.isAdmin ? 'Administrador' : user.isEditor ? 'Editor' : 'Visualizador' }}
                 </td>
-                <td>{{ user.userId }}</td>
                 <td>
-                  <v-btn v-if="isEditor" color="primary" @click="editUser(user)">Editar</v-btn>
+                  <v-btn v-if="isEditor || isAdmin" color="primary" @click="editUser(user)">Editar</v-btn>
                   <v-btn v-if="isAdmin" color="error" @click="deleteUser(user)">Excluir</v-btn>
                 </td>
               </tr>
@@ -66,6 +66,7 @@ const editedUser = ref();
 const showEditModal = ref(false);
 const isEditor = ref(false);
 const isAdmin = ref(false);
+const currentUserUid = ref(null);
 
 const fetchUsers = async () => {
   try {
@@ -82,21 +83,23 @@ const fetchUsers = async () => {
 onMounted(async () => {
   await onAuthStateChanged(auth, async (user: User | null | any) => {
     isLoggedIn.value = !!user;
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    currentUserUid.value = user.uid;
+
     await fetchUsers();
 
     const currentUser = users.value.find((u: { userId: any; }) => u.userId === user.uid);
     if (currentUser.isAdmin) {
       isAdmin.value = currentUser.isAdmin;
       console.log("Usuário é o administrador");
-
-
     }
     if (currentUser) {
-      console.log('Usuário autenticado:', currentUser);
       isEditor.value = currentUser.isEditor;
-    } else {
-      console.log('Usuário autenticado não encontrado na lista de usuários.');
-    }
+    } 
   });
 });
 
@@ -164,6 +167,5 @@ const deleteUser = async (user: any) => {
   }
 };
 
-
-
 </script>
+

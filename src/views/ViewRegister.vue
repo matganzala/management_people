@@ -23,8 +23,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
@@ -32,15 +33,18 @@ const confirmPassword = ref('');
 const name = ref('');
 const cpf = ref('');
 const lastName = ref('');
-const isEditor = ref(false)
+const isEditor = ref(false);
+const router = useRouter();
 
 const registerUser = async () => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(getAuth(), email.value, password.value);
+    const auth = getAuth(); 
+    const firestore = getFirestore();
 
+    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
     const uid = userCredential.user.uid;
 
-    await setDoc(doc(getFirestore(), 'users', uid), {
+    await setDoc(doc(firestore, 'users', uid), {
       email: email.value,
       name: name.value,
       lastName: lastName.value,
@@ -48,14 +52,22 @@ const registerUser = async () => {
       confirmPassword: confirmPassword.value,
       isEditor: isEditor.value,
       isAdmin: false
-
     });
+
+    const sessionDocRef = doc(firestore, 'sessions', 'currentSession');
+    const sessionDocSnapshot = await getDoc(sessionDocRef);
+    const sessionData = sessionDocSnapshot.data();
+
+    if (sessionData && sessionData.email && sessionData.password) {
+      await signInWithEmailAndPassword(auth, sessionData.email, sessionData.password);
+    }
+    router.push('/');
 
     alert('Registro concluído com sucesso!');
 
   } catch (error) {
-    console.error('Erro ao registrar');
+    console.error('Erro ao registrar:', error);
   }
 };
-
 </script>
+
