@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import { getAuth } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
+import { createRouter, createWebHistory } from "vue-router";
+import { User, getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD56RpNHRI8Hv8JFC2CdYLsEC2--zwxa_U",
@@ -9,7 +9,7 @@ const firebaseConfig = {
   storageBucket: "desafio-pruvo-front.appspot.com",
   messagingSenderId: "960538914255",
   appId: "1:960538914255:web:78409bf9bcb9739e97b6ba",
-  measurementId: "G-G0K6SXKHP1"
+  measurementId: "G-G0K6SXKHP1",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -18,53 +18,78 @@ const auth = getAuth(firebaseApp);
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: () => import("../views/ViewHome.vue"), meta: { requiresAuth: true }},
-    { path: "/login", component: () => import("../views/ViewLogin.vue"), meta: { requiresAuth: false }},
-    { path: "/register", component: () => import("../views/ViewRegister.vue"), meta: { requiresAuth: true }},
-  ]
+    {
+      path: "/",
+      component: () => import("../views/ViewHome.vue"),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/login",
+      component: () => import("../views/ViewLogin.vue"),
+      meta: { requiresAuth: false },
+    },
+    {
+      path: "/register",
+      component: () => import("../views/ViewRegister.vue"),
+      meta: { requiresAuth: false },
+    },
+  ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
+  let user: User;
+
   try {
-    const requiresAuth = to.meta.requiresAuth;
-    
-    if (requiresAuth) {
-      await checkAuthStatus();
-    }
-    
-    next();
-  } catch (erro) {
-    console.error('Erro de autenticação:');
-    next('/login'); 
-  }
-});
-
-async function checkAuthStatus() {
-  return new Promise<void>((resolve, reject) => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      unsubscribe();
-      if (user) {
-        resolve();
-      } else {
-        reject(new Error('Usuário não autenticado'));
-      }
+    user = await new Promise((resolve, reject) => {
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          console.log(user)
+          resolve(user);
+        } else {
+          reject(false);
+        }
+      });
     });
-  });
-}
 
-router.beforeEach(async (to, from, next) => {
-  try {
-    const requiresAuth = to.meta.requiresAuth;
     
-    if (requiresAuth) {
-      await checkAuthStatus();
+
+    if (to.path === "/login") {
+      return {
+        path: "/",
+      };
     }
-    
-    next();
-  } catch (error) {
-    console.error('Erro de autenticação:');
-    next('/login'); 
+  } catch (e) {
+    console.log(e);
+    if (to.meta.requiresAuth) {
+      // console.log(to.meta.requiresAuth)
+      return {
+        path: "/login",
+      };
+    }
   }
+
+  if (!to.matched.length) {
+    return {
+      path: "/",
+    };
+  }
+
+  const isAdmin =
+    user &&
+    user.email === "matheusadmin@gmail.com" 
+    
+
+  if (to.path === "/register" && !isAdmin) {
+    return {
+      path: "/",
+    };
+  }
+
+  
+
+
+
+  
 });
 
 export default router;
