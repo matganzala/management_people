@@ -1,15 +1,16 @@
 <template>
-  <v-container class="h-[100vh] flex">
+  <v-container class="h-screen flex">
     <v-row justify="center" align="center">
       <v-col cols="12">
-        <v-sheet v-if="isLoggedIn" class="mx-auto" width="300">
+        <v-sheet v-if="isLoggedIn" class="mx-auto" width="300" elevation="2" rounded>
+          <!-- Conteúdo após o login, se necessário -->
         </v-sheet>
-        <v-sheet v-else class="mx-auto" width="300">
+        <v-sheet v-else class="mx-auto" width="300" elevation="2" rounded>
           <v-form @submit.prevent="submit">
             <v-container>
-              <v-text-field v-model="email" label="Email"></v-text-field>
-              <v-text-field v-model="senha" label="Senha" type="password"></v-text-field>
-              <v-btn class="mt-2" type="submit" block>Submit</v-btn>
+              <v-text-field v-model="email" label="Email" :rules="emailRules" :error-messages="emailError"></v-text-field>
+              <v-text-field v-model="senha" label="Senha" type="password" :rules="passwordRules" :error-messages="senhaError"></v-text-field>
+              <v-btn class="mt-4" type="submit" block>Entrar</v-btn>
               <p class="error-message">{{ errorMessage }}</p>
             </v-container>
           </v-form>
@@ -69,6 +70,19 @@ const submit = async () => {
   }
 }
 
+const emailRules = [
+  (v: string) => !!v || 'O email é obrigatório.',
+  (v: string) => /.+@.+\..+/.test(v) || 'O email deve ser válido.',
+];
+
+const passwordRules = [
+  (v: string) => !!v || 'A senha é obrigatória.',
+  (v: string) => v.length >= 6 || 'A senha deve ter pelo menos 6 caracteres.',
+];
+
+const emailError = ref('');
+const senhaError = ref('');
+
 onMounted(() => {
   onAuthStateChanged(auth, async (user: any) => {
     if (user) {
@@ -86,7 +100,6 @@ onMounted(() => {
 });
 
 </script>
-
 
 <style scoped>
 .error-message {
