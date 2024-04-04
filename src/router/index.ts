@@ -33,6 +33,10 @@ const router = createRouter({
       component: () => import("../views/ViewRegister.vue"),
       meta: { requiresAuth: false },
     },
+    {
+      path: '/:pathMatch(.*)',
+      redirect: '/'
+    }
   ],
 });
 
