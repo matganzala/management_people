@@ -1,7 +1,7 @@
 <template>
   <v-container class="h-[100vh]">
     <button @click="logout" v-if="isLoggedIn">SING OUT</button>
-    <router-link to="/register">Register</router-link>
+    <router-link v-if="isAdmin" to="/register">Register</router-link>
     <v-card class="full-height">
       <v-card-title>Lista de Pessoas</v-card-title>
       <v-card-text>
@@ -11,18 +11,21 @@
               <tr>
                 <th class="text-left">Nome</th>
                 <th class="text-left">Email</th>
-                <th class="text-left">Idade</th>
+                <th class="text-left">Cargo</th>
                 <th class="text-left">Ações</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="space-x-5">
               <tr v-for="user in users" :key="user.userId">
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
+                <td>
+                  {{ user.isAdmin ? 'Administrador' : user.isEditor ? 'Editor' : 'Visualizador' }}
+                </td>
                 <td>{{ user.userId }}</td>
                 <td>
                   <v-btn v-if="isEditor" color="primary" @click="editUser(user)">Editar</v-btn>
-                  <v-btn color="error" @click="deleteUser(user)">Excluir</v-btn>
+                  <v-btn v-if="isAdmin" color="error" @click="deleteUser(user)">Excluir</v-btn>
                 </td>
               </tr>
             </tbody>
@@ -61,7 +64,8 @@ const auth = getAuth();
 const users = ref();
 const editedUser = ref();
 const showEditModal = ref(false);
-const isEditor = ref(false)
+const isEditor = ref(false);
+const isAdmin = ref(false);
 
 const fetchUsers = async () => {
   try {
@@ -78,9 +82,15 @@ const fetchUsers = async () => {
 onMounted(async () => {
   await onAuthStateChanged(auth, async (user: User | null | any) => {
     isLoggedIn.value = !!user;
-    await fetchUsers(); 
+    await fetchUsers();
 
-    const currentUser = users.value.find((u: { userId: any; }) => u.userId === user.uid); 
+    const currentUser = users.value.find((u: { userId: any; }) => u.userId === user.uid);
+    if (currentUser.isAdmin) {
+      isAdmin.value = currentUser.isAdmin;
+      console.log("Usuário é o administrador");
+
+
+    }
     if (currentUser) {
       console.log('Usuário autenticado:', currentUser);
       isEditor.value = currentUser.isEditor;

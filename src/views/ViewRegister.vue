@@ -30,6 +30,7 @@ const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const name = ref('');
+const cpf = ref('');
 const lastName = ref('');
 const isEditor = ref(false)
 
@@ -43,9 +44,10 @@ const registerUser = async () => {
       email: email.value,
       name: name.value,
       lastName: lastName.value,
+      cpf: cpf.value,
       confirmPassword: confirmPassword.value,
       isEditor: isEditor.value,
-      blocked: false
+      isAdmin: false
 
     });
 
