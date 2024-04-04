@@ -37,7 +37,6 @@ const registerUser = async () => {
   try {
     const userCredential = await createUserWithEmailAndPassword(getAuth(), email.value, password.value);
 
-    // Obtém o UID do usuário recém-criado
     const uid = userCredential.user.uid;
 
     await setDoc(doc(getFirestore(), 'users', uid), {

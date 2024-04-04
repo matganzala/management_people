@@ -47,7 +47,7 @@ const submit = async () => {
       await signOut(auth)
       errorMessage.value = "Usuário não encontrado. Entre em contato com o suporte.";
     }
-  } catch (error) {
+  } catch (error: any) {
     errorMessage.value = error.code;
   }
 }

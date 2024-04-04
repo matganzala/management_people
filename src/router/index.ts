@@ -37,7 +37,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  let user: User;
+  let user: User | any;
 
   try {
     user = await new Promise((resolve, reject) => {

@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { onAuthStateChanged, User, signOut, getAuth, deleteUser } from 'firebase/auth';
+import { onAuthStateChanged, User, signOut, getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import router from '../router';
 import { UserData } from '../models/userData';
@@ -69,18 +69,18 @@ const fetchUsers = async () => {
     const usersCollection = collection(db, 'users');
     const snapshot = await getDocs(usersCollection);
     const fetchedUsers = snapshot.docs.map(doc => ({ userId: doc.id, ...doc.data() }));
-    users.value = fetchedUsers; // Atribui os usuários à variável users.value após a obtenção dos dados
+    users.value = fetchedUsers;
   } catch (error) {
     console.error('Erro ao buscar os dados dos usuários:', error);
   }
 };
 
 onMounted(async () => {
-  await onAuthStateChanged(auth, async (user: User | null) => {
+  await onAuthStateChanged(auth, async (user: User | null | any) => {
     isLoggedIn.value = !!user;
     await fetchUsers(); 
 
-    const currentUser = users.value.find(u => u.userId === user.uid); 
+    const currentUser = users.value.find((u: { userId: any; }) => u.userId === user.uid); 
     if (currentUser) {
       console.log('Usuário autenticado:', currentUser);
       isEditor.value = currentUser.isEditor;
